@@ -1,0 +1,342 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\AMA\2011Y\AMA_CommonTypes_Proxy.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\AMA\2011Y\chameleon\AMA_CommonTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\AMA\2011Y\chameleon\AMA_SimpleTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\AMA\2012B\AMA_AppMdw_CommonTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\AMA\2012B\AMA_AppMdw_CommonTypes_Proxy.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\AMA\2012B\AMA_SecurityHostedUser.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\AMA\2012B\AMA_WS_Session.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\AMA_WSLink.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSACC_CheckRegulatoryRqtsReply_19_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSACC_CheckRegulatoryRqts_19_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSACC_InitiateCancelCustAcceptanceReply_16_5_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSACC_InitiateCancelCustAcceptance_16_5_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSACC_InitiateCustomerAcceptanceReply_20_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSACC_InitiateCustomerAcceptance_20_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSBAG_GetBaggageAllowanceReply_11_3_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSBAG_GetBaggageAllowance_11_3_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSCPR_EditCPRReply_20_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSCPR_EditCPR_20_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSIDC_CPRIdentificationReply_20_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSIDC_CPRIdentification_20_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSPRT_GetBoardingPassXmlDataReply_20_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSPRT_GetBoardingPassXmlData_20_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSSTG_AllocateSeatReply_15_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSSTG_AllocateSeat_15_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSSTG_DeallocationSeatReply_02_3_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSSTG_DeallocationSeat_02_3_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSSTG_EmergencyExitPromptReply_11_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSSTG_EmergencyExitPrompt_11_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSSTG_GetFDSeatMapReply_20_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSSTG_GetFDSeatMap_20_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSSTG_SwapSeatReply_07_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSSTG_SwapSeat_07_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSSTG_UpdateSeatOccupationStatusReply_01_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DCSSTG_UpdateSeatOccupationStatus_01_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DocIssuance_IssueMiscellaneousDocumentsReply_15_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\DocIssuance_IssueMiscellaneousDocuments_15_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\IATA\2010.1\chameleon\IATA_CommonTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\IATA\2010.1\chameleon\IATA_SimpleTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\IATA\2010.1\IATA_Proxy.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\OTA\2010B\chameleon\OTA_CommonTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\OTA\2010B\chameleon\OTA_SimpleTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\OTA\2010B\OTA_Proxy.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\OTA\2010B\OTA_SimpleTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\OTA\2010B\OTA_SimpleTypes_Proxy.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\PNR_AddMultiElements_22_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\PNR_ListPassengersByFlightReply_14_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\PNR_ListPassengersByFlight_14_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\PNR_List_00_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\PNR_Reply_22_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\PNR_Retrieve_22_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\Security_SignOutReply_04_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\Security_SignOut_04_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\Ticket_CreateTSMFromPricingReply_09_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\Ticket_CreateTSMFromPricing_09_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\Ticket_RetrieveListOfTSMReply_09_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICIU_TST_20250324_065005\Ticket_RetrieveListOfTSM_09_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\AMA\2011Y\AMA_CommonTypes_Proxy.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\AMA\2011Y\chameleon\AMA_CommonTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\AMA\2011Y\chameleon\AMA_SimpleTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\AMA\2012B\AMA_AppMdw_CommonTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\AMA\2012B\AMA_AppMdw_CommonTypes_Proxy.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\AMA\2012B\AMA_SecurityHostedUser.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\AMA\2012B\AMA_WS_Session.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\AMA_WSLink.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSACC_CheckRegulatoryRqtsReply_19_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSACC_CheckRegulatoryRqts_19_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSACC_InitiateCancelCustAcceptanceReply_16_5_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSACC_InitiateCancelCustAcceptance_16_5_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSACC_InitiateCustomerAcceptanceReply_20_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSACC_InitiateCustomerAcceptance_20_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSBAG_GetBaggageAllowanceReply_11_3_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSBAG_GetBaggageAllowance_11_3_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSCPR_EditCPRReply_20_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSCPR_EditCPR_20_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSIDC_CPRIdentificationReply_20_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSIDC_CPRIdentification_20_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSPRT_GetBoardingPassXmlDataReply_20_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSPRT_GetBoardingPassXmlData_20_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSSTG_AllocateSeatReply_15_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSSTG_AllocateSeat_15_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSSTG_DeallocationSeatReply_02_3_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSSTG_DeallocationSeat_02_3_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSSTG_EmergencyExitPromptReply_11_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSSTG_EmergencyExitPrompt_11_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSSTG_GetFDSeatMapReply_20_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSSTG_GetFDSeatMap_20_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSSTG_SwapSeatReply_07_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSSTG_SwapSeat_07_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSSTG_UpdateSeatOccupationStatusReply_01_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DCSSTG_UpdateSeatOccupationStatus_01_2_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DocIssuance_IssueMiscellaneousDocumentsReply_15_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\DocIssuance_IssueMiscellaneousDocuments_15_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\IATA\2010.1\chameleon\IATA_CommonTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\IATA\2010.1\chameleon\IATA_SimpleTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\IATA\2010.1\IATA_Proxy.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\OTA\2010B\chameleon\OTA_CommonTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\OTA\2010B\chameleon\OTA_SimpleTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\OTA\2010B\OTA_Proxy.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\OTA\2010B\OTA_SimpleTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\OTA\2010B\OTA_SimpleTypes_Proxy.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\PNR_AddMultiElements_22_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\PNR_ListPassengersByFlightReply_14_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\PNR_ListPassengersByFlight_14_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\PNR_List_00_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\PNR_Reply_22_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\PNR_Retrieve_22_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\Security_SignOutReply_04_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\Security_SignOut_04_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\Ticket_CreateTSMFromPricingReply_09_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\Ticket_CreateTSMFromPricing_09_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\Ticket_RetrieveListOfTSMReply_09_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Amadeus\WSDL\1ASIWWCICI_PDT_20250324_065045\Ticket_RetrieveListOfTSM_09_1_1A.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+</Project>
