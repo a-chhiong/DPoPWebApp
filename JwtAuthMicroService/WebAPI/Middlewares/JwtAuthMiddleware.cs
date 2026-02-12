@@ -91,6 +91,7 @@ public class JwtAuthMiddleware
         if (scheme == JwtAuthScheme.None)
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await context.Response.WriteAsync($"Auth failed: Missing Scheme");
             return false;
         }
 

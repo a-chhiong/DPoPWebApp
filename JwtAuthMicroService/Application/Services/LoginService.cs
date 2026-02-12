@@ -70,9 +70,9 @@ public class TokenService : ITokenService
 
         return new
         {
-            token_type = tokenWrapper.TokenType,
-            access_token = tokenWrapper.AccessToken,
-            refresh_token = tokenWrapper.RefreshToken
+            TokenType = tokenWrapper.TokenType,
+            AccessToken = tokenWrapper.AccessToken,
+            RefreshToken = tokenWrapper.RefreshToken
         };
     }
 
@@ -125,9 +125,9 @@ public class TokenService : ITokenService
         
         return new
         {
-            token_type = tokenWrapper.TokenType,
-            access_token = tokenWrapper.AccessToken,
-            refresh_token = tokenWrapper.RefreshToken
+            TokenType = tokenWrapper.TokenType,
+            AccessToken = tokenWrapper.AccessToken,
+            RefreshToken = tokenWrapper.RefreshToken
         };
     }
     
