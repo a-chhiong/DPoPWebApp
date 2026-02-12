@@ -15,6 +15,33 @@ using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CorsPolicy
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins")
+    .Get<string[]>()?.Select(o => o.Trim().TrimEnd('/')).ToArray() ?? [];   // Clean the origins (remove trailing slashes and whitespace)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        if (corsOrigins.Any())
+        {
+            if (corsOrigins.First() == "*") // 'Wildcard' mode
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            }
+            else
+            {
+                policy.WithOrigins(corsOrigins)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
+            }
+        }
+    });
+});
+
 // Initialise JwtAuth Environment Variables
 var jwtAuthEnv = builder.Configuration["JWT_AUTH_ENVIRONMENT"];
 builder.Services.Configure<JwtAuthEnvironmentOption>( 
@@ -90,6 +117,8 @@ builder.Services.AddApplicationServices();
  */
 
 var app = builder.Build();
+
+app.UseCors("CorsPolicy");
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {

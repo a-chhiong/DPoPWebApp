@@ -21,7 +21,7 @@ public class PostController: BaseController
     }
     
     /// <summary>
-    /// Fetch Any User own post by ID
+    /// Fetch Any post by ID
     /// </summary>
     [HttpGet("{id}")]
     [Consumes("application/json")]
