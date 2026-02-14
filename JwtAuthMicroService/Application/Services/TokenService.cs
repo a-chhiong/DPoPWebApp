@@ -99,12 +99,12 @@ public class TokenService : ITokenService
         }
 
         // 2. Comparing with Refresh Token Cache
-        var jti = refreshResult.Data?.Token.jti;
-        var tokenCacheEntry = await _cache.GetOrDefaultAsync<TokenCacheEntry?>($"token-jti:{jti}");
+        var comingJti = refreshResult.Data?.Token.jti;
+        var tokenCacheEntry = await _cache.GetOrDefaultAsync<TokenCacheEntry?>($"token-jti:{comingJti}");
         var existedRefreshToken = tokenCacheEntry?.RefreshToken;
         if (string.IsNullOrEmpty(existedRefreshToken))
         {
-            throw new BadHttpRequestException("Refresh token is not found!", (int)HttpStatusCode.Unauthorized);
+            throw new BadHttpRequestException("Refresh token is not found!", (int)HttpStatusCode.InternalServerError);
         }
         if (!string.Equals(existedRefreshToken, refreshToken))
         {
@@ -114,23 +114,38 @@ public class TokenService : ITokenService
         // 3. Validate the DPoP Token (if there is DPoP flow)
         var existedTokenType = tokenCacheEntry?.TokenType;
         var existedJwk = tokenCacheEntry?.Jwk;
-        var jwk = _context?.GetItem<JwkObject>();
+        var comingJwk = _context?.GetItem<JwkObject>();
         if (string.Equals(existedTokenType, "DPoP", StringComparison.OrdinalIgnoreCase))
         {
-            if (jwk == null || existedJwk == null)
+            if (existedJwk == null)
             {
-                throw new BadHttpRequestException("JWK is not found!", (int)HttpStatusCode.Unauthorized);
+                throw new BadHttpRequestException("JWK is not found!", (int)HttpStatusCode.InternalServerError);
             }
-            if (!jwk.Equals(existedJwk))
+            if (comingJwk != null && !comingJwk.Equals(existedJwk))
             {
                 throw new BadHttpRequestException("JWK is not matched!", (int)HttpStatusCode.Unauthorized);
             }
         }
 
-        // 4. Reconstruct MetaData and Issue New Token Pair
+        // 4. Reconstruct custom claims and Issue New Token Pair
         var subject = tokenCacheEntry?.Subject;
         var custom = tokenCacheEntry?.Custom;
         var tokenWrapper = _jwtAuth.Create(subject, custom, existedJwk);
+        
+        // 5. Make it Stateful, stored on Server Cache or Persistence
+        var newJti = tokenWrapper.Jti;
+        var duration = _jwtOptions.Value.RefreshExpiryInSeconds + _jwtOptions.Value.ClockSkewInSeconds;
+        await _cache.SetAsync(
+            $"token-jti:{newJti}",
+            new TokenCacheEntry
+            {
+                TokenType = tokenWrapper.TokenType,
+                RefreshToken = tokenWrapper.RefreshToken,
+                Jwk = comingJwk,
+                Custom = custom
+            },
+            TimeSpan.FromSeconds(duration));
+        await _cache.RemoveAsync($"token-jti:{comingJti}");
         
         return new
         {

@@ -16,15 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="RsaKey\PrivateKey.pem">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="RsaKey\PublicKey.pem">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
-    <ItemGroup>
       <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
         <HintPath>..\..\..\..\..\..\..\..\usr\local\share\dotnet\shared\Microsoft.AspNetCore.App\8.0.15\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
       </Reference>

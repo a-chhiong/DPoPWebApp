@@ -35,26 +35,12 @@ public class DummyJsonAdapter : IDummyJsonAdapter
         var response = await _httpClient.GetAsync(requestUri);
 
         if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException($"Upstream error: {response.StatusCode}");
+            throw new HttpRequestException($"Upstream error: {response.StatusCode}, with {query}");
 
         var json = await response.Content.ReadAsStringAsync();
         var output = JsonSerializer.Deserialize<DummyUsers>(json, _jsonOptions);
 
         return output ?? throw new ArgumentException("Email is not found!");
-    }
-    
-    public async Task<DummyProducts> FetchProducts(string query)
-    {
-        var requestUri = $"/products/search?q={Uri.EscapeDataString(query)}";
-        var response = await _httpClient.GetAsync(requestUri);
-
-        if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException($"Upstream error: {response.StatusCode}");
-
-        var json = await response.Content.ReadAsStringAsync();
-        var output = JsonSerializer.Deserialize<DummyProducts>(json, _jsonOptions);
-
-        return output ?? throw new ArgumentException("Product is not found!");
     }
     
     public async Task<DummyPosts.Post> GetPost(int id)
@@ -63,7 +49,7 @@ public class DummyJsonAdapter : IDummyJsonAdapter
         var response = await _httpClient.GetAsync(requestUri);
 
         if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException($"Upstream error: {response.StatusCode}");
+            throw new HttpRequestException($"Upstream error: {response.StatusCode}, with {id}");
 
         var json = await response.Content.ReadAsStringAsync();
         var output = JsonSerializer.Deserialize<DummyPosts.Post>(json, _jsonOptions);
@@ -77,7 +63,7 @@ public class DummyJsonAdapter : IDummyJsonAdapter
         var response = await _httpClient.GetAsync(requestUri);
 
         if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException($"Upstream error: {response.StatusCode}");
+            throw new HttpRequestException($"Upstream error: {response.StatusCode}, with {query}");
 
         var json = await response.Content.ReadAsStringAsync();
         var output = JsonSerializer.Deserialize<DummyPosts>(json, _jsonOptions);
@@ -133,12 +119,26 @@ public class DummyJsonAdapter : IDummyJsonAdapter
         var response = await _httpClient.GetAsync(requestUri);
 
         if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException($"Upstream error: {response.StatusCode}");
+            throw new HttpRequestException($"Upstream error: {response.StatusCode}, with {id}");
 
         var json = await response.Content.ReadAsStringAsync();
         var output = JsonSerializer.Deserialize<DummyProducts.Product>(json, _jsonOptions);
 
-        return output ?? throw new ArgumentException("Post is not found!");
+        return output ?? throw new ArgumentException("Product is not found!");
+    }
+
+    public async Task<DummyProducts> FetchProducts(string query)
+    {
+        var requestUri = $"/products/search?q={Uri.EscapeDataString(query)}";
+        var response = await _httpClient.GetAsync(requestUri);
+
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException($"Upstream error: {response.StatusCode}, with {query}");
+
+        var json = await response.Content.ReadAsStringAsync();
+        var output = JsonSerializer.Deserialize<DummyProducts>(json, _jsonOptions);
+
+        return output ?? throw new ArgumentException("Product is not found!");
     }
 
     public async Task<DummyUsers.User> GetUser(int id)
@@ -147,11 +147,11 @@ public class DummyJsonAdapter : IDummyJsonAdapter
         var response = await _httpClient.GetAsync(requestUri);
 
         if (!response.IsSuccessStatusCode)
-            throw new HttpRequestException($"Upstream error: {response.StatusCode}");
+            throw new HttpRequestException($"Upstream error: {response.StatusCode}, with {id}");
 
         var json = await response.Content.ReadAsStringAsync();
         var output = JsonSerializer.Deserialize<DummyUsers.User>(json, _jsonOptions);
 
-        return output ?? throw new ArgumentException("Post is not found!");
+        return output ?? throw new ArgumentException("User is not found!");
     }
 }

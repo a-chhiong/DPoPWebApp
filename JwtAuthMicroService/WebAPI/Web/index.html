@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DummyJSON Auth with Axios</title>
+    <script type="importmap">
+    {
+        "imports": {
+            "axios": "https://cdn.jsdelivr.net/npm/axios/+esm",
+            "rxjs": "https://cdn.jsdelivr.net/npm/rxjs/+esm",
+            "html": "https://cdn.jsdelivr.net/npm/lit-html/+esm",
+            "class-map": "https://cdn.jsdelivr.net/npm/lit-html/directives/class-map/+esm",
+            "style-map": "https://cdn.jsdelivr.net/npm/lit-html/directives/style-map/+esm"
+        }
+    }
+    </script>
+    <script type="module" src="index.js"></script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👽</text></svg>">
+    <style>
+    #loader {
+        display: none;
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 10px auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center; /* centers horizontally */
+        gap: 20px;               /* space between buttons */
+        margin: 20px 0;          /* spacing above/below */
+    }
+
+    #countdown {
+        display: none;
+        font-size: 24px;          /* bigger text */
+        font-weight: bold;        /* bold */
+        color: transparent;
+        text-align: center;       /* centered */
+        margin-top: 15px;
+        padding: 10px;
+        border: 1px solid #333;   /* visible border */
+        border-radius: 8px;
+        background-color: #f0f0f0;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #output {
+        white-space: pre;       /* preserve line breaks exactly */
+        overflow-x: auto;       /* allow horizontal scroll if needed */
+        max-width: 100%;        /* never exceed screen width */
+        display: block;         /* ensure block-level behavior */
+    }
+
+    .input-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin: 20px 0;
+    }
+
+    .input-container label {
+        font-weight: bold;
+    }
+
+    .input-container input {
+        padding: 6px;
+        width: 180px;
+    }
+    </style>
+</head>
+<body>
+    <h1>This is a RefreshToken Demo</h1>
+    <h2>Thanks to <a href="https://dummyjson.com/docs/auth" target="_blank">DummyJson</a></h2>
+    <h4>0. Open Developer Window</h4>
+    <h4>1. Enter Username and Password</h4>
+    <h5>> all users can be found <a href="https://dummyjson.com/users" target="_blank">HERE</a></h5>
+    <h4>2. Hit the Login Button</h4>
+    <h5>> the 'Login(bad)' is simulating mishandled RefreshToken flow
+    <h4>3. Hit the Profile Button</h4>
+    <h4>4. Wait for more than 1 minute</h4>
+    <h4>5. Hit the Profile Button Again and inspect the XHR behaviours</h4>
+    <h6>by Josh</h3>
+    <hr>
+
+    <!-- Username & Password Inputs -->
+    <div class="input-container">
+        <div>
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" placeholder="Enter username" value="charlotte.lopez@x.dummyjson.com">
+        </div>
+        <div>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" placeholder="Enter password" value="charlottempass">
+        </div>
+    </div>
+
+    <div class="button-container">
+        <button id="loginBtn">Login</button>
+        <button id="loginBadBtn">Login(bad)</button>
+        <button id="profileBtn">Profile</button>
+        <button id="postsBtn">Posts</button>
+        <button id="productsBtn">Products</button>
+        <button id="logoutBtn">Logout</button>
+    </div>
+    <hr>
+    <div id="countdown"></div>
+    <pre id="output"></pre>
+    <div id="loader"></div>
+</body>
+</html>

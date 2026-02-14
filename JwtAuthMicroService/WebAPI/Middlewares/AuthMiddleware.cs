@@ -29,8 +29,19 @@ public class AuthMiddleware
     {
         var endpoint = context.GetEndpoint();
         var isAnonymous = endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null;
+        var isWeb = context.Request.Path.StartsWithSegments("/web", StringComparison.OrdinalIgnoreCase);
 
-        if (isAnonymous)
+        if (isWeb)
+        {
+            // The Exception, will contains web resources
+            return;
+        }
+        
+        if (endpoint == null)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+        }
+        else if (isAnonymous)
         {
             // Proceed unless DPoP was provided and was INVALID
             if (await HandleAnonymousDPoP(context))

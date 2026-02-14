@@ -25,7 +25,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://0.0.0.0:5050",
+      "applicationUrl": "http://localhost:33418",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Staging",
         "JWT_AUTH_ENVIRONMENT": "UAT"

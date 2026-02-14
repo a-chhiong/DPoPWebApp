@@ -11,5 +11,6 @@ public interface IDummyJsonAdapter
     Task<DummyPosts.Post> UpdatePost(int id, string title, string body);
     Task<DummyPosts.Post> DeletePost(int id);
     Task<DummyProducts.Product> GetProduct(int id);
+    Task<DummyProducts> FetchProducts(string query);
     Task<DummyUsers.User> GetUser(int id);
 }

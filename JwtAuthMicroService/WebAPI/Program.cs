@@ -2,6 +2,7 @@ using CrossCutting.JSON;
 using CrossCutting.Logger;
 using JoshAuthorization;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.FileProviders;
 using NeoSmart.Caching.Sqlite;
 using WebAPI.Swagger;
 using NLog.Web;
@@ -33,28 +34,27 @@ catch (Exception ex)
 builder.Configuration["VersionInfo"] = versionInfo;
 
 // CorsPolicy
-var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins")
-    .Get<string[]>()?.Select(o => o.Trim().TrimEnd('/')).ToArray() ?? [];   // Clean the origins (remove trailing slashes and whitespace)
+var corsOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? [];
+Console.WriteLine($"Cors:AllowedOrigins: {string.Join(",", corsOrigins)}");
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        if (corsOrigins.Any())
+        if (corsOrigins.Contains("*")) // 'Wildcard' mode
         {
-            if (corsOrigins.First() == "*") // 'Wildcard' mode
-            {
-                policy.AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            }
-            else
-            {
-                policy.WithOrigins(corsOrigins)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials()
-                    .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
-            }
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
+        else
+        {
+            policy.WithOrigins(corsOrigins)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .SetPreflightMaxAge(TimeSpan.FromHours(1));
         }
     });
 });
@@ -130,6 +130,17 @@ builder.Services.AddApplicationServices();
  */
 
 var app = builder.Build();
+
+// Serve static files from wwwroot and /Web
+app.UseStaticFiles(); // for wwwroot
+
+// Explicitly serve /Web folder
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "Web")),
+    RequestPath = "/Web"
+});
 
 app.UseCors("CorsPolicy");
 
