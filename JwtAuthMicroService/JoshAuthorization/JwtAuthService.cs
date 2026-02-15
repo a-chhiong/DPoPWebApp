@@ -71,6 +71,7 @@ public class JwtAuthService : IJwtAuthService
             exp = now + _refreshExpiryInSeconds,
             iat = now,
             nbf = now + _refreshNotBeforeInSeconds,
+            cnf = CnfObject.From(clientJwk),
         };
         
         return new JwtWrapper
@@ -82,32 +83,33 @@ public class JwtAuthService : IJwtAuthService
         };
     }
 
-    public async Task<JwtAuthResult<TokenData>> Validate(string? token, bool isNotBefore = false)
+    public async Task<JwtAuthResult<TokenData>> Validate(string? token)
     {
         if (string.IsNullOrEmpty(token)) 
             return new JwtAuthResult<TokenData> { IsSuccess = false, Error = JwtError.InvalidToken };
-
+        
         try
         {
             var tokenPayload = Jose.JWT.Decode<TokenPayload>(token, _publicKey, Jose.JwsAlgorithm.ES256);
+            
+            // 1. Check Issuer
+            if (tokenPayload.iss != _issuer)
+                return new JwtAuthResult<TokenData> { IsSuccess = false, Error = JwtError.InvalidIssuer };
+            
+            // .2 Check Audience
+            if (tokenPayload.aud != _audience)
+                return new JwtAuthResult<TokenData> { IsSuccess = false, Error = JwtError.InvalidAudience };
+            
             var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-            if (tokenPayload.iss != _issuer) return new JwtAuthResult<TokenData> { IsSuccess = false, Error = JwtError.InvalidIssuer };
-            if (tokenPayload.aud != _audience) return new JwtAuthResult<TokenData> { IsSuccess = false, Error = JwtError.InvalidAudience };
-
-            // Expiry logic
+            
+            // 3. Expiry logic
             if (now > tokenPayload.exp)
                 return new JwtAuthResult<TokenData> { IsSuccess = false, Error = JwtError.ExpiredToken };
 
-            // NBF logic
-            if (isNotBefore)
-            {
-                if (!tokenPayload.nbf.HasValue)
-                    return new JwtAuthResult<TokenData> { IsSuccess = false, Error = JwtError.InvalidNBF };
-                if (now < tokenPayload.nbf.Value)
-                    return new JwtAuthResult<TokenData> { IsSuccess = false, Error = JwtError.UntimelyToken };
-            }
-
+            // 4. NBF logic
+            if (tokenPayload.nbf.HasValue && now < tokenPayload.nbf.Value)
+                return new JwtAuthResult<TokenData> { IsSuccess = false, Error = JwtError.UntimelyToken };
+            
             return new JwtAuthResult<TokenData> { IsSuccess = true, Data = new TokenData { Token = tokenPayload } };
         }
         catch
@@ -121,36 +123,35 @@ public class JwtAuthService : IJwtAuthService
         if (string.IsNullOrEmpty(token)) 
             return new JwtAuthResult<DPoPData> { IsSuccess = false, Error = JwtError.InvalidToken };
 
-        var expectedMethod = request.Method;
-        var expectedUrl = $"{_baseUrl}{request.Path.Value}";
-
         try
         {
             var headers = Jose.JWT.Headers(token);
 
-            // Check typ header per RFC 9449
+            // 0. Check typ header per RFC 9449
             if (headers["typ"]?.ToString() != "dpop+jwt")
                 return new JwtAuthResult<DPoPData> { IsSuccess = false, Error = JwtError.InvalidToken };
 
+            // 1. Safely map header jwk to our JwkObject
             JwkObject? jwkObj = null;
-            // Safely map header jwk to our JwkObject
             if (headers.TryGetValue("jwk", out var jwk) && jwk is IDictionary<string, object> dict)
-            {
                 jwkObj = JwkObject.From(dict);
-            }
-            if (jwkObj == null) return new JwtAuthResult<DPoPData> { IsSuccess = false, Error = JwtError.InvalidToken };
+            if (jwkObj == null)
+                return new JwtAuthResult<DPoPData> { IsSuccess = false, Error = JwtError.InvalidToken };
             
             var dpopPayload = Jose.JWT.Decode<DPoPPayload>(token, jwkObj.ToECDsa(), Jose.JwsAlgorithm.ES256);
-
-            var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             
+            // 2. Check HTM (Method)
+            var expectedMethod = request.Method;
             if (!string.Equals(dpopPayload.htm, expectedMethod, StringComparison.OrdinalIgnoreCase))
                 return new JwtAuthResult<DPoPData> { IsSuccess = false, Error = JwtError.InvalidHtm };
 
+            // 3. Check HTU (URL)
+            var expectedUrl = $"{_baseUrl}{request.Path.Value}";
             if (!string.Equals(dpopPayload.htu, expectedUrl, StringComparison.OrdinalIgnoreCase))
                 return new JwtAuthResult<DPoPData> { IsSuccess = false, Error = JwtError.InvalidHtu };
-
-            // DPoP tokens are usually very short-lived; we check 'iat'
+            
+            // 4. DPoP tokens are usually very short-lived; we check 'iat'
+            var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             if (Math.Abs(now - dpopPayload.iat) > _clockSkewInSeconds)
                 return new JwtAuthResult<DPoPData> { IsSuccess = false, Error = JwtError.UnsyncToken };
 
@@ -177,29 +178,28 @@ public class JwtAuthService : IJwtAuthService
         var dpopResult = await this.Validate(dpop, request);
         if (!dpopResult.IsSuccess) 
             return new JwtAuthResult<AccessData> { IsSuccess = false, Error = dpopResult.Error };
-        var jwk = dpopResult.Data?.Jwk;
-    
+        
         // 3. PERFORM THE ATH CHECK (Access Token Hash)
         // RFC 9449: ath = base64url(sha256(ASCII(access_token)))
-        var dpopPayload = dpopResult.Data?.DPoP;
+        var dpopPayload = dpopResult.Data!.DPoP;
         var hashBytes = SHA256.HashData(Encoding.ASCII.GetBytes(token));
         var expectedAth = Jose.Base64Url.Encode(hashBytes);
-        if (string.IsNullOrEmpty(dpopPayload?.ath) || !string.Equals(dpopPayload?.ath, expectedAth))
-        {
+        if (string.IsNullOrEmpty(dpopPayload.ath) || !string.Equals(dpopPayload.ath, expectedAth))
             return new JwtAuthResult<AccessData> { IsSuccess = false, Error = JwtError.InvalidAth };
-        }
-
+        
         // 4. Perform the Binding Check (Sender Constraining)
-        var tokenPayload = accessResult.Data?.Token;
-        var boundJkt = tokenPayload?.cnf?.jkt;
-        var calculatedJkt = CnfObject.From(dpopResult.Data?.Jwk)?.jkt;
-        // We need the JWK from the DPoP Header to check against the Refresh Token's CNF
+        var comingJwk = dpopResult.Data!.Jwk;
+        var tokenPayload = accessResult.Data!.Token;
+        var boundJkt = tokenPayload.cnf?.jkt;
+        var calculatedJkt = CnfObject.From(comingJwk)?.jkt;
+        
+        // 4-1. We need the JWK from the DPoP Header to check against the Token's CNF
         if (string.IsNullOrEmpty(boundJkt) 
             || string.IsNullOrEmpty(calculatedJkt) 
             || !string.Equals(boundJkt, calculatedJkt, StringComparison.OrdinalIgnoreCase)) 
             return new JwtAuthResult<AccessData> { IsSuccess = false, Error = JwtError.InvalidBinding };
 
         // If everything passes, return the Normal Token payload
-        return new JwtAuthResult<AccessData> { IsSuccess = true , Data = new AccessData { Jwk = jwk!, DPoP = dpopPayload!, Token = tokenPayload!} };
+        return new JwtAuthResult<AccessData> { IsSuccess = true , Data = new AccessData { Jwk = comingJwk!, DPoP = dpopPayload!, Token = tokenPayload!} };
     }
 }

@@ -57,47 +57,50 @@ public class AuthMiddleware
     private async Task<bool> HandleAnonymousDPoP(HttpContext context)
     {
         // 1. Try to get the DPoP Proof header (Optional depending on scheme)
-        var (scheme, authToken, dpopToken) = context.GetAuthScheme();
+        var (_, _, dpopToken) = context.GetAuthScheme();
 
         // 2. Skip it if there ISN'T!
         if (string.IsNullOrEmpty(dpopToken))
             return true;
         
-        // 3. Validate it if there IS!
+        // 3. Validate DPoP if there IS!
         var dpopResult = await _jwtAuth.Validate(dpopToken, context.Request);
-        if (dpopResult.IsSuccess)
-        {
-            var dpopPayload = dpopResult.Data?.DPoP;
-            var jwkObject = dpopResult.Data?.Jwk;
-            context.SetItem(dpopPayload);
-            context.SetItem(jwkObject);
-        }
-        else
+        
+        if (!dpopResult.IsSuccess)
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             await context.Response.WriteAsync($"DPoP Validation failed: {dpopResult.Error}");
             return false;
         }
         
+        var jwkObject = dpopResult.Data!.Jwk;
+        var dpopPayload = dpopResult.Data!.DPoP;
+        var jti = dpopPayload.jti;
+        
+        // 4. DPoP Anti-Replay Attack
+        if(true == await _cache.GetOrDefaultAsync<bool?>($"dpop-jti:{jti}"))
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            await context.Response.WriteAsync($"Auth failed: Replayed DPoP");
+            return false;
+        }
+        await _cache.SetAsync($"dpop-jti:{jti}", true, TimeSpan.FromMinutes(10));
+        
+        context.SetItem(dpopPayload);
+        context.SetItem(jwkObject);
+            
         return true;
     }
 
     private async Task<bool> HandleAuthorization(HttpContext context)
     {
+        // 0. Have Request Context Ready...
+        var request = context.Request;
+        
         // 1. Use a tuple to get the scheme and token cleanly
         var (scheme, authToken, dpopToken) = context.GetAuthScheme();
 
         // 2. Authorization Flow
-        if (scheme == JwtAuthScheme.None)
-        {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            await context.Response.WriteAsync($"Auth failed: Missing Scheme");
-            return false;
-        }
-
-        var request = context.Request;
-        
-        // Call the service based on the resolved scheme
         IJwtAuthResult<IJwtResultData> result = scheme switch
         {
             JwtAuthScheme.DPoP => await _jwtAuth.Validate(authToken, dpopToken, request),
@@ -112,55 +115,30 @@ public class AuthMiddleware
             return false;
         }
 
-        // For DPoP replay Attack
-        if (scheme == JwtAuthScheme.DPoP)
+        if (scheme == JwtAuthScheme.DPoP && result is JwtAuthResult<AccessData> authResult)
         {
-            var authResult = result as JwtAuthResult<AccessData>;
-            var dpopPayload = authResult?.Data?.DPoP;
-            var jti = dpopPayload?.jti;
-            if (string.IsNullOrEmpty(jti))
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                await context.Response.WriteAsync($"Auth failed: No Valid DPoP jti");
-                return false;
-            }
-            var data = await _cache.GetOrDefaultAsync<bool?>($"dpop-jti:{jti}");
-            if (data != null)
+            var jwkObject = authResult.Data!.Jwk;
+            var dpopPayload = authResult.Data!.DPoP;
+            var jti = dpopPayload.jti;
+            var tokenPayload = authResult.Data!.Token;
+            
+            // DPoP Anti-Replay Attack
+            if(true == await _cache.GetOrDefaultAsync<bool?>($"dpop-jti:{jti}"))
             {
                 context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                 await context.Response.WriteAsync($"Auth failed: Replayed DPoP");
                 return false;
             }
-
-            var jwkObject = authResult?.Data?.Jwk;
-            if (jwkObject == null)
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                await context.Response.WriteAsync($"Auth failed: Missing Jwk");
-                return false;
-            }
-            var tokenPayload = authResult?.Data?.Token;
-            if (tokenPayload == null)
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                await context.Response.WriteAsync($"Auth failed: Missing Payload");
-                return false;
-            }
             await _cache.SetAsync($"dpop-jti:{jti}", true, TimeSpan.FromMinutes(10));
+            
             context.SetItem(jwkObject);
             context.SetItem(dpopPayload);
             context.SetItem(tokenPayload);
         }
-        else if (scheme == JwtAuthScheme.Bearer)
+        else if (scheme == JwtAuthScheme.Bearer && result is JwtAuthResult<TokenData> tokenResult)
         {
-            var tokenResult = result as JwtAuthResult<TokenData>;
-            var tokenPayload = tokenResult?.Data?.Token;
-            if (tokenPayload == null)
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                await context.Response.WriteAsync($"Auth failed: Missing Payload");
-                return false;
-            }
+            var tokenPayload = tokenResult.Data!.Token;
+            
             context.SetItem(tokenPayload);
         }
 

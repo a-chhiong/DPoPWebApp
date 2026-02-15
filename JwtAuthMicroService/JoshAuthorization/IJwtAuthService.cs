@@ -16,8 +16,7 @@ public interface IJwtAuthService
     /// Validates a standard JWT (Access Token / Refresh Token).
     /// </summary>
     /// <param name="token">The JWT string.</param>
-    /// <param name="isNotBefore">Force NBF checking</param>
-    Task<JwtAuthResult<TokenData>> Validate(string? token, bool isNotBefore = false);
+    Task<JwtAuthResult<TokenData>> Validate(string? token);
     
     /// <summary>
     /// Validates initial DPoP Proof

@@ -8,7 +8,6 @@ public enum JwtError
     InvalidIssuer,
     InvalidAudience,
     InvalidJTI,
-    InvalidNBF,
     ExpiredToken,
     MissingToken,
     UntimelyToken,

@@ -7,7 +7,6 @@ public class TokenCacheEntry
 {
     public string TokenType { get; init; }
     public string RefreshToken { get; init; }
-    public JwkObject? Jwk { get; init; }
     public string? Subject { get; init; }
     public object? Custom { get; init; }
 }
