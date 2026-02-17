@@ -2,7 +2,6 @@
 import { BehaviorSubject } from 'rxjs';
 import { Theme } from '../constants/Theme.js';
 import { Identity } from '../constants/Identity.js';
-import { Config } from '../constants/Config.js';
 
 class ThemeManager {
     constructor() {
@@ -18,7 +17,7 @@ class ThemeManager {
     get current() { return this._theme$.value; }
 
     setTheme(mode) {
-        localStorage.setItem(`${Identity.APP_SCHEM}${Config.THEME_MODE}`, mode);
+        localStorage.setItem(`${Identity.APP_SCHEM}THEME`, mode);
         this._apply(mode);
         this._theme$.next(mode);
     }
@@ -29,7 +28,7 @@ class ThemeManager {
     }
 
     _initMode() {
-        const saved = localStorage.getItem(`${Identity.APP_SCHEM}${Config.THEME_MODE}`);
+        const saved = localStorage.getItem(`${Identity.APP_SCHEM}THEME`);
         if (saved) return saved;
 
         return window.matchMedia('(prefers-color-scheme: dark)').matches 

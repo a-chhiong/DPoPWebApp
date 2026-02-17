@@ -1,7 +1,7 @@
-import { vaultMgr } from './VaultManager.js';
+import { vaultManager } from './VaultManager.js';
 import { Identity } from '../constants/Identity.js';
 import { Config } from "../constants/Config.js";
-import { stateHub } from '../objects/EventHub.js';
+import { stateHub } from '../helpers/EventHub.js';
 import { BehaviorSubject, distinctUntilChanged, map } from 'rxjs';
 
 /**
@@ -62,8 +62,8 @@ class TokenManager {
 
     async _loadTokens(idx) {
         return await Promise.all([
-            vaultMgr.load(`${Identity.APP_SCHEM}${Config.ACCESS_TOKEN}[${idx}]`),
-            vaultMgr.load(`${Identity.APP_SCHEM}${Config.REFRESH_TOKEN}[${idx}]`)
+            vaultManager.load(`${Identity.APP_SCHEM}AT[${idx}]`),
+            vaultManager.load(`${Identity.APP_SCHEM}RT[${idx}]`)
         ]);
     }
 
@@ -115,8 +115,8 @@ class TokenManager {
     
     async _saveTokens(idx, at, rt) {
         await Promise.all([
-            vaultMgr.save(`${Identity.APP_SCHEM}${Config.ACCESS_TOKEN}[${idx}]`, at),
-            vaultMgr.save(`${Identity.APP_SCHEM}${Config.REFRESH_TOKEN}[${idx}]`, rt)
+            vaultManager.save(`${Identity.APP_SCHEM}AT[${idx}]`, at),
+            vaultManager.save(`${Identity.APP_SCHEM}RT[${idx}]`, rt)
         ]);
     }
 
@@ -141,8 +141,8 @@ class TokenManager {
 
     async _clearTokens(idx) {
         await Promise.all([
-            vaultMgr.clear(`${Identity.APP_SCHEM}${Config.ACCESS_TOKEN}[${idx}]`),
-            vaultMgr.clear(`${Identity.APP_SCHEM}${Config.REFRESH_TOKEN}[${idx}]`)
+            vaultManager.clear(`${Identity.APP_SCHEM}AT[${idx}]`),
+            vaultManager.clear(`${Identity.APP_SCHEM}RT[${idx}]`)
         ]);
     }
 
@@ -172,4 +172,4 @@ class TokenManager {
     }
 }
 
-export const tokenMgr = new TokenManager();
+export const tokenManager = new TokenManager();
