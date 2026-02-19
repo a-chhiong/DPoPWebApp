@@ -21,10 +21,12 @@ This project is an exploration of "Framework-less" development. Instead of reach
 
 The project follows a strict organizational pattern to ensure maintainability:
 
-* `src/managers`: Singleton state providers (The "Source of Truth").
-* `src/ui/Manifest.js`: The "Android Manifest" for your Web Components.
-* `src/ui/Bootstrap.js`: The application's `onCreate` equivalent.
-* `src/ui/views`: Top-level routed screens.
+* `src/Manifest.js`: The "Android Manifest" for your Web Components.
+* `src/Bootstrap.js`: The application's `onCreate` equivalent.
+* `src/managers/`: Singleton state providers (The "Source of Truth").
+* `src/services/`: The `ViewModel` of each View.
+* `src/ui/views/`: Top-level routed screens.
+* `src/ui/components/`: Shared UI elements.
 
 ---
 
