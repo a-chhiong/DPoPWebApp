@@ -56,7 +56,7 @@ class SessionManager {
         
         // If slot is empty, generate a new identity for this index
         if (!registry[idx]) {
-            registry[idx] = `$${crypto.randomUUID().replace("-", "").substring(1, 9)}`;
+            registry[idx] = `$${crypto.randomUUID().replaceAll("-", "").substring(0, 8)}`;
             this._saveRegistry(registry);
         }
 
