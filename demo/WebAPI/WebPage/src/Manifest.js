@@ -1,15 +1,15 @@
 // Views
-import { AppShell } from './AppShell.js';
-import { LaunchView } from './views/LaunchView.js';
-import { LoginView } from './views/LoginView.js';
-import { HomeView } from './views/HomeView.js';
+import { AppShell } from './ui/AppShell.js';
+import { LaunchView } from './ui/views/LaunchView.js';
+import { LoginView } from './ui/views/LoginView.js';
+import { HomeView } from './ui/views/HomeView.js';
 
 // Components
-import { ProfileHeader } from './components/ProfileHeader.js';
-import { VaultIdentity } from './components/VaultIdentity.js';
-import { BiometricCard } from './components/BiometricCard.js';
-import { FinancialSlots } from './components/FinancialSlots.js';
-import { CryptoAssets } from './components/CryptoAssets.js';
+import { ProfileHeader } from './ui/components/ProfileHeader.js';
+import { VaultIdentity } from './ui/components/VaultIdentity.js';
+import { BiometricCard } from './ui/components/BiometricCard.js';
+import { FinancialSlots } from './ui/components/FinancialSlots.js';
+import { CryptoAssets } from './ui/components/CryptoAssets.js';
 
 const tags = {
     // Views

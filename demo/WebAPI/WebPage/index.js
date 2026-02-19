@@ -1,5 +1,5 @@
-import { manifesto } from './src/ui/Manifest.js';
-import { bootstrapper } from './src/ui/Bootstrap.js';
+import { manifesto } from './src/Manifest.js';
+import { bootstrapper } from './src/Bootstrap.js';
 
 manifesto();
 await bootstrapper();

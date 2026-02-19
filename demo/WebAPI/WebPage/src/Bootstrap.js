@@ -1,9 +1,9 @@
-import { themeManager } from '../managers/ThemeManager.js';
-import { vaultManager } from '../managers/VaultManager.js';
-import { sessionManager } from '../managers/SessionManager.js';
-import { tokenManager } from '../managers/TokenManager.js';
-import { dpopManager } from '../managers/DPoPManager.js';
-import { apiManager } from '../managers/ApiManager.js';
+import { themeManager } from './managers/ThemeManager.js';
+import { vaultManager } from './managers/VaultManager.js';
+import { sessionManager } from './managers/SessionManager.js';
+import { tokenManager } from './managers/TokenManager.js';
+import { dpopManager } from './managers/DPoPManager.js';
+import { apiManager } from './managers/ApiManager.js';
 
 export async function bootstrapper() {
     console.group("🚀 UI Bootstrap");
