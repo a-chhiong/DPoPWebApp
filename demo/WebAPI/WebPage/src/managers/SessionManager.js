@@ -5,6 +5,7 @@ class SessionManager {
     constructor() {
         this.activeIdx = null;
         this.activeId = null;
+        this._isInitialised = false;
     }
 
     /**
@@ -17,8 +18,8 @@ class SessionManager {
 
         const registry = this._getRegistry();
         const urlId = this._parseIdFromUrl();
-        const tabIdx = sessionStorage.getItem(`${Identity.APP_SCHEM}_TAB_IDX`);
-        const lastIdx = localStorage.getItem(`${Identity.APP_SCHEM}_LAST_IDX`);
+        const tabIdx = sessionStorage.getItem(`${Identity.APP_SCHEM}TAB_INDEX`);
+        const lastIdx = localStorage.getItem(`${Identity.APP_SCHEM}LAST_ACTIVE`);
 
         let targetIdx = 0;
 
@@ -32,8 +33,10 @@ class SessionManager {
 
         this._resolve(targetIdx);
 
+        console.debug(`activeIdx:`, this.activeIdx);
+        console.debug(`activeId:`, this.activeId);
+
         this._isInitialised = true;
-        return { idx: this.activeIdx, id: this.activeId };
     }
 
     /**
@@ -48,11 +51,12 @@ class SessionManager {
     }
 
     _resolve(idx) {
+        console.debug(`resolve, idx:`, idx);
         const registry = this._getRegistry();
         
         // If slot is empty, generate a new identity for this index
         if (!registry[idx]) {
-            registry[idx] = `s_${Math.random().toString(36).substring(2, 7)}`;
+            registry[idx] = `$${crypto.randomUUID().replace("-", "").substring(1, 9)}`;
             this._saveRegistry(registry);
         }
 
@@ -60,24 +64,23 @@ class SessionManager {
         this.activeId = registry[idx];
 
         // Persistence
-        sessionStorage.setItem(`${Identity.APP_SCHEM}_TAB_IDX`, this.activeIdx);
-        localStorage.setItem(`${Identity.APP_SCHEM}_LAST_IDX`, this.activeIdx);
+        sessionStorage.setItem(`${Identity.APP_SCHEM}TAB_INDEX`, this.activeIdx);
+        localStorage.setItem(`${Identity.APP_SCHEM}LAST_ACTIVE`, this.activeIdx);
     }
 
     _getRegistry() {
-        const raw = localStorage.getItem(`${Identity.APP_SCHEM}_REGISTRY`);
+        const raw = localStorage.getItem(`${Identity.APP_SCHEM}REGISTRY`);
         return raw ? JSON.parse(raw) : new Array(Session.MAX_COUNT).fill(null);
     }
 
     _saveRegistry(arr) {
-        localStorage.setItem(`${Identity.APP_SCHEM}_REGISTRY`, JSON.stringify(arr));
+        localStorage.setItem(`${Identity.APP_SCHEM}REGISTRY`, JSON.stringify(arr));
     }
 
     _parseIdFromUrl() {
         const parts = window.location.hash.split('/');
-        return (parts[1]?.startsWith('s_')) ? parts[1] : null;
+        return (parts[1]?.startsWith('$')) ? parts[1] : null;
     }
 }
 
 export const sessionManager = new SessionManager();
-export const SESSION_MAX = 10;

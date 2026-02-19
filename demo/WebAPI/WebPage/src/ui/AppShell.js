@@ -45,8 +45,6 @@ export class AppShell extends LitElement {
         console.debug(`firstUpdated`);
         const outlet = this.shadowRoot.getElementById('outlet');
         this.router = new Router(outlet);
-        // Show the splash screen immediately
-        this.router.toLaunch();
         
         // Initial route check
         if (this.auth.value) {

@@ -27,13 +27,18 @@ async function bootstrap() {
         // A. INITIALIZE SERVICES
         // 1. Initialize Vault & Session
         await vaultManager.init();
-        const sessionIdx = sessionManager.init();
+        sessionManager.init();
+        
+        console.log("🛠️ This Start Index:", sessionManager.activeIdx); 
+        console.log("🛠️ This Session Id:", sessionManager.activeId); 
+
+        const startIdx = sessionManager.activeIdx;
 
         // 2. Initialize Security Layer (DPoP & Tokens)
         // Using Promise.all here just like your v2 code for efficiency
         await Promise.all([
-            tokenManager.init(sessionIdx),
-            dpopManager.init(sessionIdx)
+            tokenManager.init(startIdx),
+            dpopManager.init(startIdx)
         ]);
 
         // 3. Finalize API Layer
