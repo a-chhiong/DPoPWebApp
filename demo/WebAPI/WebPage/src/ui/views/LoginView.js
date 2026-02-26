@@ -1,10 +1,34 @@
 import { LitElement, html, css } from 'lit';
-import { themeManager } from '../../managers/ThemeManager.js';
-import { loginService } from '../../services/LoginService.js';
+import { BaseView } from './BaseView.js';
 import { LifecycleHub } from '../../helpers/LifecycleHub.js';
+import { LoginViewModel } from '../../viewmodels/LoginViewModel.js';
 import { Theme } from '../../constants/Theme.js';
 
-export class LoginView extends LitElement {
+export class LoginView extends BaseView {
+    constructor() {
+        super();
+        this.username = '';
+        this.password = '';
+
+        this.viewModel = new LoginViewModel();
+        this.themeHub = new LifecycleHub(this, this.viewModel.theme$);
+        this.loadingHub = new LifecycleHub(this, this.viewModel.loading$);
+        this.errorHub = new LifecycleHub(this, this.viewModel.error$);
+
+        this.testUsers = [
+            { name: 'Emily Johnson', user: 'emilys', pass: 'emilyspass', role: 'Admin' },
+            { name: 'Michael Williams', user: 'michaelw', pass: 'michaelwpass', role: 'Admin' },
+            { name: 'Sophia Brown', user: 'sophiab', pass: 'sophiabpass', role: 'Admin' },
+            { name: 'James Davis', user: 'jamesd', pass: 'jamesdpass', role: 'Admin' },
+            { name: 'Emma Miller', user: 'emmaj', pass: 'emmajpass', role: 'Admin' },
+            { name: 'Olivia Wilson', user: 'oliviaw', pass: 'oliviawpass', role: 'Mod' },
+            { name: 'Alexander Jones', user: 'alexanderj', pass: 'alexanderjpass', role: 'Mod' },
+            { name: 'Ava Taylor', user: 'avat', pass: 'avatpass', role: 'Mod' },
+            { name: 'Ethan Martinez', user: 'ethanm', pass: 'ethanmpass', role: 'Mod' },
+            { name: 'Isabella Anderson', user: 'isabellad', pass: 'isabelladpass', role: 'Mod' }
+        ];
+    }
+
     static properties = {
         username: { type: String },
         password: { type: String }
@@ -95,29 +119,6 @@ export class LoginView extends LitElement {
         }
     `;
 
-    constructor() {
-        super();
-        this.username = '';
-        this.password = '';
-
-        this.themeHub = new LifecycleHub(this, themeManager.theme$);
-        this.loadingHub = new LifecycleHub(this, loginService.loading$);
-        this.errorHub = new LifecycleHub(this, loginService.error$);
-
-        this.testUsers = [
-            { name: 'Emily Johnson', user: 'emilys', pass: 'emilyspass', role: 'Admin' },
-            { name: 'Michael Williams', user: 'michaelw', pass: 'michaelwpass', role: 'Admin' },
-            { name: 'Sophia Brown', user: 'sophiab', pass: 'sophiabpass', role: 'Admin' },
-            { name: 'James Davis', user: 'jamesd', pass: 'jamesdpass', role: 'Admin' },
-            { name: 'Emma Miller', user: 'emmaj', pass: 'emmajpass', role: 'Admin' },
-            { name: 'Olivia Wilson', user: 'oliviaw', pass: 'oliviawpass', role: 'Mod' },
-            { name: 'Alexander Jones', user: 'alexanderj', pass: 'alexanderjpass', role: 'Mod' },
-            { name: 'Ava Taylor', user: 'avat', pass: 'avatpass', role: 'Mod' },
-            { name: 'Ethan Martinez', user: 'ethanm', pass: 'ethanmpass', role: 'Mod' },
-            { name: 'Isabella Anderson', user: 'isabellad', pass: 'isabelladpass', role: 'Mod' }
-        ];
-    }
-
     _handleQuickSelect(e) {
         const selectedValue = e.target.value;
         const found = this.testUsers.find(u => u.user === selectedValue);
@@ -128,7 +129,7 @@ export class LoginView extends LitElement {
     }
 
     _handleLogin() {
-        loginService.login(this.username, this.password);
+        this.viewModel.login(this.username, this.password);
     }
 
     render() {
@@ -149,7 +150,7 @@ export class LoginView extends LitElement {
                         size="small" 
                         circle 
                         outline 
-                        @click=${() => themeManager.setTheme(isDark ? Theme.LIGHT : Theme.DARK)}>
+                        @click=${() => this.viewModel.toggleTheme()}>
                         <sl-icon name="${isDark ? 'moon' : 'sun'}"></sl-icon>
                     </sl-button>
                 </div>

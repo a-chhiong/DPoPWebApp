@@ -1,24 +1,44 @@
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
 import { map, tap, takeWhile, timer } from 'rxjs';
+import { BaseViewModel } from './BaseViewModel.js';
 import { apiManager } from '../managers/ApiManager.js';
 import { tokenManager } from '../managers/TokenManager.js';
+import { themeManager } from '../managers/ThemeManager.js';
+import { Theme } from '../constants/Theme.js';
 
-export class HomeService {
+export class HomeViewModel extends BaseViewModel {
     constructor() {
+        super();
         // Observables for the UI to "Hook" into
         this.user$ = new BehaviorSubject(null);
         this.remainingTime$ = new BehaviorSubject(-1);
         this.loading$ = new BehaviorSubject(false);
-        
         // Internal subscription management
         this._timerSub = null;
+        // Wrap the manager's stream so the View only sees the VM
+        this.theme$ = themeManager.theme$;
+    }
+
+    async onConnect() {
+        super.onConnect();
+        await this._initDashboard();
+    }
+
+    onDisconnect() {
+        super.onDisconnect();
+        this._stopHeartbeat();
+    }
+
+    toggleTheme() {
+        const current = themeManager.current;
+        themeManager.setTheme(current === Theme.DARK ? Theme.LIGHT : Theme.DARK);
     }
 
     /**
      * Entry point for HomeView (onStart equivalent)
      */
-    async initDashboard() {
-        this.startHeartbeat();
+    async _initDashboard() {
+        this._startHeartbeat();
         
         // Prevent double-loading if user is already there
         if (this.user$.value) return;
@@ -29,7 +49,7 @@ export class HomeService {
             this.user$.next(res.data);
             
             // Start the security heartbeat once we have the user
-            this.startHeartbeat();
+            this._startHeartbeat();
         } catch (err) {
             console.error("HomeService: Profile Sync Failed", err);
         } finally {
@@ -40,9 +60,9 @@ export class HomeService {
     /**
      * Security Heartbeat logic (The JWT Countdown)
      */
-    startHeartbeat() {
+    _startHeartbeat() {
         // Cleanup existing timer if any
-        this.stopHeartbeat();
+        this._stopHeartbeat();
 
         const token = tokenManager.getAccessToken();
         const expiry = this._getExpiry(token);
@@ -76,7 +96,7 @@ export class HomeService {
         } catch (e) { return -1; }
     }
 
-    stopHeartbeat() {
+    _stopHeartbeat() {
         if (this._timerSub) {
             this._timerSub.unsubscribe();
             this._timerSub = null;
@@ -84,7 +104,7 @@ export class HomeService {
     }
 
     async logout() {
-        this.stopHeartbeat();
+        this._stopHeartbeat();
         try {
             const rt = tokenManager.getRefreshToken();
             if (rt) {
@@ -100,5 +120,3 @@ export class HomeService {
         }
     }
 }
-
-export const homeService = new HomeService();

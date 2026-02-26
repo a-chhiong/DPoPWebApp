@@ -1,10 +1,19 @@
 import { LitElement, html, css } from 'lit';
-import { homeService } from '../../services/HomeService.js';
-import { themeManager } from '../../managers/ThemeManager.js';
+import { BaseView } from './BaseView.js';
 import { LifecycleHub } from '../../helpers/LifecycleHub.js';
+import { HomeViewModel } from '../../viewmodels/HomeViewModel.js';
 import { Theme } from '../../constants/Theme.js';
 
-export class HomeView extends LitElement {
+export class HomeView extends BaseView {
+    constructor() {
+        super();
+        // Create a FRESH instance for THIS view only
+        this.viewModel = new HomeViewModel();
+        this.themeHub = new LifecycleHub(this, this.viewModel.theme$);
+        this.userHub = new LifecycleHub(this, this.viewModel.user$);
+        this.timeHub = new LifecycleHub(this, this.viewModel.remainingTime$);
+    }
+
     static styles = css`
         :host { display: block; animation: fadeIn 0.4s ease-out; }
         .container { max-width: 1400px; margin: 0 auto; padding: var(--sl-spacing-large); }
@@ -40,18 +49,6 @@ export class HomeView extends LitElement {
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     `;
 
-    constructor() {
-        super();
-        this.userHub = new LifecycleHub(this, homeService.user$);
-        this.timeHub = new LifecycleHub(this, homeService.remainingTime$);
-        this.themeHub = new LifecycleHub(this, themeManager.theme$);
-    }
-
-    connectedCallback() {
-        super.connectedCallback();
-        homeService.initDashboard();
-    }
-
     render() {
         const user = this.userHub.value;
         if (!user) return this._renderDecrypting();
@@ -61,7 +58,9 @@ export class HomeView extends LitElement {
                 <profile-header 
                     .user=${user} 
                     .timeLeft=${this.timeHub.value}
-                    .isDark=${this.themeHub.value === Theme.DARK}>
+                    .isDark=${this.themeHub.value === Theme.DARK}
+                    @toggle-theme=${() => this.viewModel.toggleTheme()}
+                    @logout-requested=${() => this.viewModel.logout()}>
                 </profile-header>
 
                 <main class="grid-layout">

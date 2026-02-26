@@ -1,7 +1,4 @@
 import { LitElement, html, css } from 'lit';
-import { homeService } from '../../services/HomeService.js';
-import { themeManager } from '../../managers/ThemeManager.js';
-import { Theme } from '../../constants/Theme.js';
 
 export class ProfileHeader extends LitElement {
     static styles = css`
@@ -57,8 +54,19 @@ export class ProfileHeader extends LitElement {
     }
 
     _toggleTheme() {
-        const newTheme = this.isDark ? Theme.LIGHT : Theme.DARK;
-        themeManager.setTheme(newTheme);
+        // Emit a custom event instead of calling a service
+        this.dispatchEvent(new CustomEvent('toggle-theme', {
+            bubbles: true,
+            composed: true
+        }));
+    }
+
+    _handleLogoutClick() {
+        // Emit a custom event instead of calling a service
+        this.dispatchEvent(new CustomEvent('logout-requested', {
+            bubbles: true,
+            composed: true
+        }));
     }
 
     render() {
@@ -105,7 +113,7 @@ export class ProfileHeader extends LitElement {
                             circle 
                             outline 
                             title="Logout"
-                            @click=${() => homeService.logout()}>
+                            @click=${this._handleLogoutClick}>
                             <sl-icon name="box-arrow-right"></sl-icon>
                         </sl-button>
                     </div>

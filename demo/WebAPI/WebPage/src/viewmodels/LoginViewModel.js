@@ -1,12 +1,23 @@
 import { apiManager } from '../managers/ApiManager.js';
 import { tokenManager } from '../managers/TokenManager.js';
+import { themeManager } from '../managers/ThemeManager.js';
+import { Theme } from '../constants/Theme.js';
 import { BehaviorSubject } from 'rxjs';
+import { BaseViewModel } from './BaseViewModel.js';
 
-export class LoginService {
+export class LoginViewModel extends BaseViewModel {
     constructor() {
+        super();
         // State for the view to observe
         this.loading$ = new BehaviorSubject(false);
         this.error$ = new BehaviorSubject(null);
+        // Wrap the manager's stream so the View only sees the VM
+        this.theme$ = themeManager.theme$;
+    }
+
+    toggleTheme() {
+        const current = themeManager.current;
+        themeManager.setTheme(current === Theme.DARK ? Theme.LIGHT : Theme.DARK);
     }
 
     async login(username, password) {
@@ -29,7 +40,14 @@ export class LoginService {
             this.loading$.next(false);
         }
     }
-}
 
-// Export a singleton instance
-export const loginService = new LoginService();
+    onDisconnect() {
+        this._dispose();
+    }
+
+    _dispose() {
+        // Complete the streams so no one stays subscribed
+        this.loading$.complete();
+        this.error$.complete();
+    }
+}
