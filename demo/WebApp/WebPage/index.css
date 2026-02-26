@@ -1,7 +1,56 @@
 /**
- * 1. THE CLOAK 
- * We use 'display: none' or 'visibility: hidden' to ensure the 
- * browser doesn't try to paint an unstyled component.
+ * 1. THE NATIVE APP FOUNDATION
+ * We set up the root and html to handle mobile notches and 
+ * the dynamic nature of mobile browser toolbars.
+ */
+:root {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+    /* Layer 1 Fallback: Immediate flicker protection */
+    background-color: #1a1a1a; 
+    
+    /* Ensure the background fills the entire screen regardless of URL bars */
+    height: 100%;
+    min-height: 100vh;
+    min-height: 100dvh; /* Modern browsers: Dynamic Viewport Height */
+    
+    /* Fix for older iOS height logic */
+    height: -webkit-fill-available;
+    
+    /* Smooth theme transitions */
+    transition: background-color 0.3s ease;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    /* Stop the "rubber-band" bounce effect at the edges */
+    overscroll-behavior: none;
+    /* Remove the gray tap highlight box on mobile Safari/Chrome */
+    -webkit-tap-highlight-color: transparent;
+}
+
+/**
+ * 2. THE THEME ENGINE
+ * Once ThemeManager applies the class, we transition to design tokens.
+ */
+html.sl-theme-light {
+    background-color: #ffffff; 
+    background-color: var(--sl-color-neutral-0); 
+}
+
+html.sl-theme-dark {
+    background-color: #1a1a1a; 
+    background-color: var(--sl-color-neutral-0);
+}
+
+/**
+ * 3. THE CLOAK & REVEAL
+ * Ensures the user doesn't see "raw" unstyled HTML before JS loads.
  */
 app-shell:not([resolved]) {
     display: none;
@@ -9,43 +58,7 @@ app-shell:not([resolved]) {
 
 app-shell[resolved] {
     display: block;
-    opacity: 1;
-    transition: opacity 0.5s ease-in;
-}
-
-/**
- * 2. THE DUAL-LAYER FALLBACK
- * Layer 1: A hardcoded hex color. This is the only way to be 100% 
- * flicker-proof because it doesn't rely on variables or JS.
- */
-html {
-    /* A neutral "loading" gray that looks okay in both light/dark */
-    background-color: #1a1a1a; 
-    height: 100%;
-}
-
-/**
- * Layer 2: Transition to Shoelace Variables.
- * Once ThemeManager tags the HTML and Shoelace CSS loads,
- * we switch to the actual design system tokens.
- */
-html.sl-theme-light {
-    background-color: #ffffff; /* Hardcoded fallback */
-    background-color: var(--sl-color-neutral-0); 
-}
-
-html.sl-theme-dark {
-    background-color: #1a1a1a; /* Hardcoded fallback */
-    background-color: var(--sl-color-neutral-0);
-}
-
-/**
- * 3. THE REVEAL
- * Smoothly fade in the app once index.js calls setAttribute('resolved')
- */
-app-shell[resolved] {
-    display: block;
-    animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn 0.4s ease-in-out forwards;
 }
 
 @keyframes fadeIn {
@@ -53,7 +66,26 @@ app-shell[resolved] {
     to { opacity: 1; }
 }
 
-/* --- Utility Layout Classes --- */
+/**
+ * 4. MOBILE-SPECIFIC GESTURE CONTROL
+ * We allow desktop zoom/selection but lock it down for the mobile "App" feel.
+ */
+@media (max-width: 768px) {
+    body {
+        /* Prevents accidental text selection when tapping buttons */
+        user-select: none;
+        -webkit-user-select: none;
+        
+        /* pan-x pan-y allows normal scrolling but blocks the 
+           pinch-to-zoom gesture on the body level */
+        touch-action: pan-x pan-y; 
+    }
+}
+
+/**
+ * 5. UTILITY CLASSES
+ * Standardized spacing and layout helpers.
+ */
 .flex { display: flex; }
 .items-center { align-items: center; }
 .justify-between { justify-content: space-between; }
@@ -75,9 +107,11 @@ app-shell[resolved] {
 .mt-2 { margin-top: 0.5rem; }
 .mt-8 { margin-top: 2rem; }
 
-.min-h-screen { min-height: 100vh; }
+.min-h-screen { min-height: 100vh; min-height: 100dvh; }
 
-/* --- Loader Overlay (Shoelace doesn’t ship one) --- */
+/**
+ * 6. UI OVERLAYS
+ */
 .loader-overlay {
   position: fixed;
   inset: 0;
@@ -89,6 +123,7 @@ app-shell[resolved] {
   z-index: 9999;
 }
 
-body, sl-card, sl-input, sl-button, sl-switch {
-  transition: background-color 0.3s ease, color 0.3s ease;
+/* Global transitions for interactive elements */
+sl-card, sl-input, sl-button, sl-switch {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }

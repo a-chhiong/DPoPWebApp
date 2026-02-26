@@ -1,5 +1,5 @@
-import { BehaviorSubject, interval, Subscription } from 'rxjs';
-import { map, tap, takeWhile, timer } from 'rxjs';
+import { BehaviorSubject, timer, takeUntil } from 'rxjs'; // Fix: import takeUntil from main
+import { map, tap, takeWhile } from 'rxjs';
 import { BaseViewModel } from './BaseViewModel.js';
 import { apiManager } from '../managers/ApiManager.js';
 import { tokenManager } from '../managers/TokenManager.js';
@@ -7,26 +7,26 @@ import { themeManager } from '../managers/ThemeManager.js';
 import { Theme } from '../constants/Theme.js';
 
 export class HomeViewModel extends BaseViewModel {
-    constructor() {
-        super();
-        // Observables for the UI to "Hook" into
-        this.user$ = new BehaviorSubject(null);
-        this.remainingTime$ = new BehaviorSubject(-1);
-        this.loading$ = new BehaviorSubject(false);
-        // Internal subscription management
+    constructor(host) {
+        super(host);
+        
+        // 1. Private Subjects (Sources)
+        this._user$ = new BehaviorSubject(null);
+        this._remainingTime$ = new BehaviorSubject(-1);
+        this._loading$ = new BehaviorSubject(false);
+
+        // 2. Bound UI State (The "Hubs" are now internal)
+        this.user = this.bind(this._user$);
+        this.time = this.bind(this._remainingTime$, -1);
+        this.theme = this.bind(themeManager.theme$, themeManager.current);
+        this.loading = this.bind(this._loading$, false);
+
         this._timerSub = null;
-        // Wrap the manager's stream so the View only sees the VM
-        this.theme$ = themeManager.theme$;
     }
 
     async onConnect() {
-        super.onConnect();
+        // Triggered automatically by Lit's hostConnected
         await this._initDashboard();
-    }
-
-    onDisconnect() {
-        super.onDisconnect();
-        this._stopHeartbeat();
     }
 
     toggleTheme() {
@@ -34,65 +34,46 @@ export class HomeViewModel extends BaseViewModel {
         themeManager.setTheme(current === Theme.DARK ? Theme.LIGHT : Theme.DARK);
     }
 
-    /**
-     * Entry point for HomeView (onStart equivalent)
-     */
     async _initDashboard() {
         this._startHeartbeat();
         
-        // Prevent double-loading if user is already there
-        if (this.user$.value) return;
+        if (this._user$.value) return;
 
-        this.loading$.next(true);
+        this._loading$.next(true);
         try {
             const res = await apiManager.authApi.get('/user');
-            this.user$.next(res.data);
-            
-            // Start the security heartbeat once we have the user
+            this._user$.next(res.data);
             this._startHeartbeat();
         } catch (err) {
-            console.error("HomeService: Profile Sync Failed", err);
+            console.error("HomeViewModel: Profile Sync Failed", err);
         } finally {
-            this.loading$.next(false);
+            this._loading$.next(false);
         }
     }
 
-    /**
-     * Security Heartbeat logic (The JWT Countdown)
-     */
     _startHeartbeat() {
-        // Cleanup existing timer if any
         this._stopHeartbeat();
-
         const token = tokenManager.getAccessToken();
         const expiry = this._getExpiry(token);
 
         if (expiry <= 0) return;
 
+        // Use takeUntil(this.destroy$) as a secondary safety net
         this._timerSub = timer(0, 1000).pipe(
-            map(() => {
-                const now = Math.floor(Date.now() / 1000);
-                return Math.max(0, expiry - now);
-            }),
+            map(() => Math.max(0, expiry - Math.floor(Date.now() / 1000))),
             tap(timeLeft => {
-                this.remainingTime$.next(timeLeft);
-                if (timeLeft === 0) {
-                    // Optional: Trigger auto-logout or alert
-                    console.warn("Session Expired");
-                }
+                this._remainingTime$.next(timeLeft);
+                if (timeLeft === 0) console.warn("Session Expired");
             }),
-            // Automatically stop the stream when time hits zero
-            takeWhile(timeLeft => timeLeft >= 0, true) 
-        ).subscribe({
-            complete: () => console.log("HomeService: Heartbeat stopped (Expired or Logged Out)")
-        });
+            takeWhile(timeLeft => timeLeft >= 0, true),
+            takeUntil(this.destroy$) 
+        ).subscribe();
     }
 
     _getExpiry(token) {
         if (!token) return -1;
         try {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            return payload.exp;
+            return JSON.parse(atob(token.split('.')[1])).exp;
         } catch (e) { return -1; }
     }
 
@@ -107,16 +88,11 @@ export class HomeViewModel extends BaseViewModel {
         this._stopHeartbeat();
         try {
             const rt = tokenManager.getRefreshToken();
-            if (rt) {
-                await apiManager.tokenApi.post("/logout", { refreshToken: rt });
-            }
-        } catch (err) {
-            console.warn("HomeService: Logout request failed, clearing local state anyway.");
+            if (rt) await apiManager.tokenApi.post("/logout", { refreshToken: rt });
         } finally {
-            // This triggers tokenMgr's isAuthenticated$ -> AppShell routes to Login
             await tokenManager.clearTokens();
-            this.user$.next(null);
-            this.remainingTime$.next(-1);
+            this._user$.next(null);
+            this._remainingTime$.next(-1);
         }
     }
 }

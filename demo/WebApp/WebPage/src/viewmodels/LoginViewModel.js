@@ -1,18 +1,23 @@
+import { BehaviorSubject } from 'rxjs';
+import { BaseViewModel } from './BaseViewModel.js';
 import { apiManager } from '../managers/ApiManager.js';
 import { tokenManager } from '../managers/TokenManager.js';
 import { themeManager } from '../managers/ThemeManager.js';
 import { Theme } from '../constants/Theme.js';
-import { BehaviorSubject } from 'rxjs';
-import { BaseViewModel } from './BaseViewModel.js';
 
 export class LoginViewModel extends BaseViewModel {
-    constructor() {
-        super();
-        // State for the view to observe
-        this.loading$ = new BehaviorSubject(false);
-        this.error$ = new BehaviorSubject(null);
-        // Wrap the manager's stream so the View only sees the VM
-        this.theme$ = themeManager.theme$;
+    constructor(host) {
+        super(host); // Registers this VM as a Controller for the View
+
+        // 1. Private Subjects (The Sources)
+        this._loading$ = new BehaviorSubject(false);
+        this._error$ = new BehaviorSubject(null);
+
+        // 2. Bound UI State (The "Hubs" are now internal)
+        // These properties update automatically and trigger this.host.requestUpdate()
+        this.loading = this.bind(this._loading$, false);
+        this.error = this.bind(this._error$, null);
+        this.theme = this.bind(themeManager.theme$, themeManager.current);
     }
 
     toggleTheme() {
@@ -21,33 +26,23 @@ export class LoginViewModel extends BaseViewModel {
     }
 
     async login(username, password) {
-        this.loading$.next(true);
-        this.error$.next(null);
+        this._loading$.next(true);
+        this._error$.next(null);
 
         try {
             const res = await apiManager.tokenApi.post("/login", { username, password });
             const { accessToken, refreshToken } = res.data;
 
-            // This is the "Transaction": Save tokens and let the system react
             await tokenManager.saveTokens(accessToken, refreshToken);
-            return { success: true };
-
+            // System usually reacts to token change via Router, 
+            // but we return success for local logic if needed.
+            return true;
         } catch (err) {
             const msg = err.response?.data?.message || err.message || "Login Failed";
-            this.error$.next(msg);
-            return { success: false, error: msg };
+            this._error$.next(msg);
+            return false;
         } finally {
-            this.loading$.next(false);
+            this._loading$.next(false);
         }
-    }
-
-    onDisconnect() {
-        this._dispose();
-    }
-
-    _dispose() {
-        // Complete the streams so no one stays subscribed
-        this.loading$.complete();
-        this.error$.complete();
     }
 }

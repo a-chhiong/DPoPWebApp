@@ -1,6 +1,5 @@
 import { LitElement, html, css } from 'lit';
 import { BaseView } from './BaseView.js';
-import { LifecycleHub } from '../../helpers/LifecycleHub.js';
 import { LoginViewModel } from '../../viewmodels/LoginViewModel.js';
 import { Theme } from '../../constants/Theme.js';
 
@@ -10,11 +9,8 @@ export class LoginView extends BaseView {
         this.username = '';
         this.password = '';
 
-        this.viewModel = new LoginViewModel();
-        this.themeHub = new LifecycleHub(this, this.viewModel.theme$);
-        this.loadingHub = new LifecycleHub(this, this.viewModel.loading$);
-        this.errorHub = new LifecycleHub(this, this.viewModel.error$);
-
+        this.viewModel = new LoginViewModel(this);
+        
         this.testUsers = [
             { name: 'Emily Johnson', user: 'emilys', pass: 'emilyspass', role: 'Admin' },
             { name: 'Michael Williams', user: 'michaelw', pass: 'michaelwpass', role: 'Admin' },
@@ -43,6 +39,10 @@ export class LoginView extends BaseView {
             width: 100%;
             background: radial-gradient(circle at center, var(--sl-color-neutral-100) 0%, var(--sl-color-neutral-50) 100%);
             transition: background 0.5s ease;
+            
+            /* Mobile Native Fixes (Invisible to the eye) */
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :host([theme="dark"]) {
@@ -56,7 +56,6 @@ export class LoginView extends BaseView {
             margin: var(--sl-spacing-large);
         }
 
-        /* The Horizontal Header Logic */
         div[slot="header"] {
             display: flex;
             flex-direction: row;
@@ -73,8 +72,20 @@ export class LoginView extends BaseView {
 
         .theme-toggle-btn {
             font-size: 1.1rem;
-            /* Ensures no extra margin bumps it off line */
-            margin: 0; 
+            margin: 0; /* Prevents alignment shift */
+        }
+
+        /* --- MOBILE INPUT FIX (Stops the Zoom-In Glitch) --- */
+        @media (max-width: 768px) {
+            sl-input::part(input) {
+                font-size: 16px; /* iOS won't zoom in if font is exactly 16px */
+            }
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--sl-spacing-medium);
         }
 
         .dev-tools {
@@ -93,12 +104,6 @@ export class LoginView extends BaseView {
             margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 1px;
-        }
-
-        .form {
-            display: flex;
-            flex-direction: column;
-            gap: var(--sl-spacing-medium);
         }
 
         .role-header {
@@ -120,8 +125,7 @@ export class LoginView extends BaseView {
     `;
 
     _handleQuickSelect(e) {
-        const selectedValue = e.target.value;
-        const found = this.testUsers.find(u => u.user === selectedValue);
+        const found = this.testUsers.find(u => u.user === e.target.value);
         if (found) {
             this.username = found.user;
             this.password = found.pass;
@@ -133,9 +137,10 @@ export class LoginView extends BaseView {
     }
 
     render() {
-        const isDark = this.themeHub.value === Theme.DARK;
-        const isLoading = this.loadingHub.value;
-        const error = this.errorHub.value;
+        // Access state directly from the ViewModel
+        const isDark = this.viewModel.theme.value === Theme.DARK;
+        const isLoading = this.viewModel.loading.value;
+        const error = this.viewModel.error.value;
 
         this.setAttribute('theme', isDark ? 'dark' : 'light');
 
