@@ -48,8 +48,8 @@ class DPoPManager {
 
     async _loadKeys(idx) {
         return await Promise.all([
-            vaultManager.loadKey(`${Identity.APP_SCHEM}PUBLIC[${idx}]`),
-            vaultManager.loadKey(`${Identity.APP_SCHEM}PRIVATE[${idx}]`)
+            vaultManager.loadKey(`${Identity.APP_SCHEM}PRIVATE[${idx}]`),
+            vaultManager.loadKey(`${Identity.APP_SCHEM}PUBLIC[${idx}]`)
         ]);
     }
 
@@ -106,8 +106,8 @@ class DPoPManager {
 
     async _saveKeys(idx, priv, pub) {
         await Promise.all([
-            vaultManager.saveKey(`${Identity.APP_SCHEM}PUBLIC[${idx}]`, priv),
-            vaultManager.saveKey(`${Identity.APP_SCHEM}PRIVATE[${idx}]`, pub)
+            vaultManager.saveKey(`${Identity.APP_SCHEM}PRIVATE[${idx}]`, priv),
+            vaultManager.saveKey(`${Identity.APP_SCHEM}PUBLIC[${idx}]`, pub)
         ]);
     }
 
@@ -143,8 +143,8 @@ class DPoPManager {
 
     async _clearKeys(idx) {
         await Promise.all([
-            vaultManager.deleteKey(`${Identity.APP_SCHEM}PUBLIC[${idx}]`),
-            vaultManager.deleteKey(`${Identity.APP_SCHEM}PRIVATE[${idx}]`)
+            vaultManager.deleteKey(`${Identity.APP_SCHEM}PRIVATE[${idx}]`),
+            vaultManager.deleteKey(`${Identity.APP_SCHEM}PUBLIC[${idx}]`)
         ]);
     }
 

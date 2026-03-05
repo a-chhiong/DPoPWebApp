@@ -82,6 +82,7 @@ class VaultManager {
                 const ids = await new Promise(res => {
                     const req = tx.objectStore(this._valueStore).getAllKeys();
                     req.onsuccess = () => res(req.result);
+                    req.onerror = () => rej(req.error);
                 });
 
                 for (const id of ids) {
@@ -97,6 +98,8 @@ class VaultManager {
                 
                 this._masterKey = newKey;
                 console.log("Rotation complete.");
+            } catch(err) {
+                throw err;
             } finally {
                 // Clear the promise so the gate opens
                 this._rotationPromise = null;
@@ -188,6 +191,7 @@ class VaultManager {
         return new Promise((res, rej) => {
             const req = tx.objectStore(this._keyStore).get(keyId);
             req.onsuccess = () => res(req.result || null);
+            req.onerror = () => rej(req.error);
         });
     }
 

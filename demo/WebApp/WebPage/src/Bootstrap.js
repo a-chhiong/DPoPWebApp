@@ -27,11 +27,8 @@ export async function bootstrapper() {
         const startIdx = sessionManager.activeIdx;
 
         // 2. Initialize Security Layer (DPoP & Tokens)
-        // Using Promise.all here just like your v2 code for efficiency
-        await Promise.all([
-            tokenManager.init(startIdx),
-            dpopManager.init(startIdx)
-        ]);
+        await tokenManager.init(startIdx);
+        await dpopManager.init(startIdx);
 
         // 3. Finalize API Layer
         apiManager.init();
