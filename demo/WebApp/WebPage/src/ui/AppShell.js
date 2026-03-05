@@ -9,7 +9,13 @@ export class AppShell extends LitElement {
         super();
         this.router = null;
         this.loading = { show: false, message: 'Processing...' };
-        this.alert = { show: false, title: '', message: '' };
+        
+        this.simpleAlert = { 
+            show: false, 
+            title: '', 
+            message: '', 
+            onClose: null // Dynamic callback
+        };
 
         this._onLoader = (e) => {
             this.loading = e.detail;
@@ -17,7 +23,13 @@ export class AppShell extends LitElement {
         };
 
         this._onDialog = (e) => {
-            this.alert = { show: true, ...e.detail };
+            const { title, message, onClose } = e.detail;
+            this.simpleAlert = { 
+                show: true, 
+                title: title || 'Notice', 
+                message: message || '', 
+                onClose: onClose || null 
+            };
             this.requestUpdate();
         };
 
@@ -133,24 +145,20 @@ export class AppShell extends LitElement {
                 if (isLogout) {
                     this.router.toLogin();
                 } else {
-                    this.alert = {
-                        show: true,
-                        title: 'Session Expired',
-                        message: 'Your session has timed out. Please log in again.'
-                    };
-                    this.requestUpdate();
+                    // Trigger the general dialog with a specific "Login" callback
+                    this._onDialog({
+                        detail: {
+                            title: 'Session Expired',
+                            message: 'Your session has timed out. Please log in again.',
+                            onClose: () => this.router.toLogin() 
+                        }
+                    });
                 }
                 return;
             }
         }
         
         isAuth === true ? this.router.toHome() : this.router.toLogin();
-    }
-
-    _onClickDialog() {
-        this.alert.show = false;
-        this.router.toLogin();
-        this.requestUpdate();
     }
 
     render() {
@@ -164,15 +172,44 @@ export class AppShell extends LitElement {
                 </loader-overlay>
 
                 <sl-dialog 
-                    label="${this.alert.title}" 
-                    ?open="${this.alert.show}" 
-                    @sl-after-hide="${this._onClickDialog}">
-                    <p>${this.alert.message}</p>
-                    <sl-button slot="footer" variant="primary" @click="${this._onClickDialog}">
+                    label="${this.simpleAlert.title}" 
+                    ?open="${this.simpleAlert.show}" 
+                    @sl-after-hide="${this._handleDialogClose}">
+                    <p>${this.simpleAlert.message}</p>
+                    <sl-button slot="footer" variant="primary" @click="${this._closeDialogTrigger}">
                         OK
                     </sl-button>
                 </sl-dialog>
             </div>
         `;
+    }
+
+/**
+     * 1. THE TRIGGER: User clicks OK or logic calls this.
+     */
+    _closeDialogTrigger() {
+        // Just change the state. Shoelace maps 'open' to 'this.simpleAlert.show'
+        this.simpleAlert = { ...this.simpleAlert, show: false };
+        this.requestUpdate();
+    }
+
+    /**
+     * 2. THE FINALIZER: This runs AFTER the closing animation finishes.
+     */
+    _handleDialogClose() {
+        // Execute the callback if it exists
+        // FIX: Changed this.alert to this.simpleAlert
+        if (typeof this.simpleAlert.onClose === 'function') {
+            this.simpleAlert.onClose();
+        }
+
+        // Reset the object to clean state
+        this.simpleAlert = { 
+            show: false, 
+            title: '', 
+            message: '', 
+            onClose: null 
+        };
+        this.requestUpdate();
     }
 }

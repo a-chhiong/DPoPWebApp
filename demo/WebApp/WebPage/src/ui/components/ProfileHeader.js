@@ -58,14 +58,43 @@ export class ProfileHeader extends LitElement {
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
+
+        /* Account Switcher Styling */
+        sl-menu-item sl-badge {
+            margin-left: var(--sl-spacing-x-small);
+        }
+
+        .active-dot {
+            color: var(--sl-color-success-600);
+            margin-right: var(--sl-spacing-x-small);
+        }
+
+        .account-switcher {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Ensure the trigger button inside the div behaves like the others */
+        .account-switcher sl-dropdown sl-button {
+            font-size: 1.1rem;
+        }
     `;
 
     static properties = {
         user: { type: Object },
         accessLeft: { type: Number },
         sessionLeft: { type: Number },
-        isDark: { type: Boolean }
+        isDark: { type: Boolean },
+        // Multi-account data
+        registry: { type: Array },   // The SessionManager registry
+        activeIdx: { type: Number }  // The currently active index
     };
+
+    constructor() {
+        super();
+        this.registry = [];
+        this.activeIdx = 0;
+    }
 
     _formatTime(seconds) {
         if (seconds <= 0) return 'EXPIRED';
@@ -80,6 +109,8 @@ export class ProfileHeader extends LitElement {
         if (seconds < criticalThreshold) return 'warning pulse'; // Pulsing red when critical
         return 'success'; // Green otherwise
     }
+
+    // --- Event Handlers ---
 
     _handleReloadClick() {
         this.dispatchEvent(new CustomEvent('reload-requested', {
@@ -102,6 +133,44 @@ export class ProfileHeader extends LitElement {
         }));
     }
 
+    /**
+     * Handles selection from the Account Switcher menu.
+     */
+    _handleAccountSelect(e) {
+        const selectedIdx = e.detail.item.value;
+        
+        if (selectedIdx === 'add-account') {
+            // Find first empty slot to "add" into
+            const emptyIdx = this.registry.findIndex(id => id === null);
+            if (emptyIdx !== -1) {
+                this._dispatchSwitch(emptyIdx);
+            } else {
+                this.dispatchEvent(new CustomEvent('app:dialog', {
+                    bubbles: true,
+                    composed: true,
+                    detail: { 
+                        title: 'Limit Reached', 
+                        message: 'Maximum account slots reached.',
+                        onClose: () => console.log('User acknowledged the limit error')
+                    }
+                }));
+            }
+        } else {
+            const idx = parseInt(selectedIdx, 10);
+            if (idx !== this.activeIdx) {
+                this._dispatchSwitch(idx);
+            }
+        }
+    }
+
+    _dispatchSwitch(idx) {
+        this.dispatchEvent(new CustomEvent('account-switch', {
+            bubbles: true,
+            composed: true,
+            detail: { index: idx }
+        }));
+    }
+
     render() {
         if (!this.user) return html``;
         
@@ -111,12 +180,28 @@ export class ProfileHeader extends LitElement {
         return html`
             <header class="header">
                 <div class="profile-brand">
-                    <sl-avatar image="${this.user.image}" style="--size: 4.5rem;"></sl-avatar>
+                    <div class="account-switcher">
+                        <sl-dropdown>
+                            <sl-avatar slot="trigger" image="${this.user.image}" style="--size: 4.5rem; cursor: pointer;"></sl-avatar>
+                            <sl-menu @sl-select=${this._handleAccountSelect}>
+                                <sl-menu-label>My Accounts</sl-menu-label>
+                                ${this.registry.map((id, idx) => html`
+                                    <sl-menu-item .value="${idx.toString()}" ?disabled=${idx === this.activeIdx && id !== null}>
+                                        ${idx === this.activeIdx ? html`<sl-icon slot="prefix" name="dot" class="active-dot"></sl-icon>` : ''}
+                                        Account ${idx + 1}
+                                        ${id ? html`<sl-badge variant="neutral" pill>${id}</sl-badge>` : html`<sl-badge variant="warning" outline>Unused</sl-badge>`}
+                                    </sl-menu-item>
+                                `)}
+                                <sl-divider></sl-divider>
+                                <sl-menu-item value="add-account">
+                                    <sl-icon slot="prefix" name="person-plus"></sl-icon> Add Account
+                                </sl-menu-item>
+                            </sl-menu>
+                        </sl-dropdown>
+                    </div>
                     <div>
                         <h2 style="margin: 0;">${this.user.firstName} ${this.user.lastName}</h2>
-                        <sl-badge variant="neutral" pill style="margin-top: 8px;">
-                            ${this.user.role.toUpperCase()}
-                        </sl-badge>
+                        <sl-badge variant="neutral" pill style="margin-top: 8px;">${this.user.role.toUpperCase()}</sl-badge>
                     </div>
                 </div>
 
