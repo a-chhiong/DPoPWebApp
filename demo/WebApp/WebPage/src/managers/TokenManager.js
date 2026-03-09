@@ -98,6 +98,7 @@ class TokenManager {
         }
 
         // Adaptive Wait: If this specific index is hydrating, wait for it.
+        const idx = this._currentIdx;
         const pendingHydration = this._hydratingSlots.get(idx);
         if (pendingHydration) {
             console.debug(`[TokenManager] Awaiting hydration for slot ${idx}...`);
