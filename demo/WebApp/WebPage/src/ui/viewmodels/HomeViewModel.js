@@ -53,11 +53,8 @@ export class HomeViewModel extends BaseViewModel {
 
     _startHeartbeat() {
         this._stopHeartbeat();
-        const at = tokenManager.getAccessToken();
-        const rt = tokenManager.getRefreshToken();
-        const atExpiry = this._getExpiry(at);
-        const rtExpiry = this._getExpiry(rt);
-
+        const { atExpiry, rtExpiry } = tokenManager.getTokenExpiries;
+        
         if (rtExpiry <= 0) return;
 
         this._timerSub = timer(0, 1000).pipe(

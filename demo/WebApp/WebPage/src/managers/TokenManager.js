@@ -106,6 +106,24 @@ class TokenManager {
         }
     }
 
+    _getExpiry(token) {
+        if (!token) return -1;
+        try {
+            return JSON.parse(atob(token.split('.')[1])).exp;
+        } catch (e) { return -1; }
+    }
+
+    get getTokenExpiries() {
+        const idx = this._currentIdx;
+        const atToken = this._sessionTokens[idx]?.at || null;
+        const rtToken = this._sessionTokens[idx]?.rt || null;
+
+        const atExpiry = this._getExpiry(atToken);
+        const rtExpiry = this._getExpiry(rtToken);
+
+        return { atExpiry, rtExpiry };
+    }
+
     // Explicit index-based accessors
     async getAccessToken() { 
         await this._assertReady();
