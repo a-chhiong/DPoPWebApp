@@ -115,8 +115,8 @@ class TokenManager {
 
     async getTokenExpiries() {
         const idx = this._currentIdx;
-        const atToken = await getAccessToken();
-        const rtToken = await getRefreshToken();
+        const atToken = await this.getAccessToken();
+        const rtToken = await this.getRefreshToken();
 
         const atExpiry = this._getExpiry(atToken);
         const rtExpiry = this._getExpiry(rtToken);
